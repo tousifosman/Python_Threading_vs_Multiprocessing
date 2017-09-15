@@ -1,6 +1,7 @@
 import sched, time, threading, multiprocessing
 
 stopThread = False
+stopProcess = False
 threadCounts = []
 processCounts = []
 
@@ -15,7 +16,6 @@ def thread_handle(args):
 
     threadCounts.append(counter)
 
-
 threads = []    
 def process_thread():
     global theads
@@ -27,11 +27,14 @@ def process_thread():
         threads.append(t)
 
 def process_handle(args):
+    global stopProcess    
     global processCounts
     print ('In Process - %d' % args)
     counter = 0;
-    while not stopThread:
+    
+    while not stopProcess:
         counter += 1
+        print(stopProcess)
 
     processCounts.append(counter)
 
@@ -45,10 +48,8 @@ def process_process():
         p.start()
         processes.append(p)
         
-    print(processes)
-    
         
-def stop_process():
+def stop_thread():
     global stopThread
     global threadCounts
     global thread
@@ -57,20 +58,26 @@ def stop_process():
 
     for t in threads:
         t.join()
+        
+    print ('Process Counts -', sum(threadCounts))
 
-def count_p_process():
+def stop_process():
+    global stopProcess
     global processCounts
     global processes
     
-    for p in processes:
-        p.join()
+    print('In Stop process -', stopProcess)
+    stopProcess = True
+    
+    #for p in processes:
+    #    p.join()
         
     print ('Process Counts -', sum(processCounts))
 
-s.enter(0, 1, process_thread, ())
+#s.enter(0, 1, process_thread, ())
 s.enter(0, 1, process_process, ())
+#s.enter(5, 2, stop_thread, ())
 s.enter(5, 2, stop_process, ())
-s.enter(5, 3, count_p_process, ())
 s.run()
 
         
