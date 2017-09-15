@@ -7,6 +7,8 @@ processCounts = []
 
 s = sched.scheduler(time.time, time.sleep)
 
+#%% Handle Thread
+
 def thread_handle(args):
     global threadCounts
     print ('In Thread - %d\n' % args),
@@ -25,6 +27,20 @@ def process_thread():
         t = threading.Thread(target=thread_handle, args=[i])
         t.start()
         threads.append(t)
+        
+def stop_thread():
+    global stopThread
+    global threadCounts
+    global thread
+
+    stopThread = True
+
+    for t in threads:
+        t.join()
+        
+    print ('Process Counts -', sum(threadCounts))
+
+#%% Handle Process
 
 def process_handle(args):
     global stopProcess    
@@ -32,7 +48,7 @@ def process_handle(args):
     print ('In Process - %d' % args)
     counter = 0;
     
-    while not stopProcess:
+    while not False:
         counter += 1
         print(stopProcess)
 
@@ -48,19 +64,6 @@ def process_process():
         p.start()
         processes.append(p)
         
-        
-def stop_thread():
-    global stopThread
-    global threadCounts
-    global thread
-
-    stopThread = True
-
-    for t in threads:
-        t.join()
-        
-    print ('Process Counts -', sum(threadCounts))
-
 def stop_process():
     global stopProcess
     global processCounts
@@ -69,8 +72,8 @@ def stop_process():
     print('In Stop process -', stopProcess)
     stopProcess = True
     
-    #for p in processes:
-    #    p.join()
+    for p in processes:
+        p.join()
         
     print ('Process Counts -', sum(processCounts))
 
